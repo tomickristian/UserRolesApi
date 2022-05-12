@@ -41,8 +41,8 @@ namespace UserRolesApi.Controllers
         {
             try
             {
-                var report = await _renderService.RenderByNameAsync("htmlToXlsx", null);
-                return Ok(report.Content);
+                var report = await _renderService.RenderByNameAsync("excel", null);
+                return File(report.Content, "application/octet-stream", "report.xlsx");
             }
             catch (Exception ex)
             {
