@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using jsreport.AspNetCore;
+using jsreport.Types;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -21,13 +22,12 @@ namespace UserRolesApi.Controllers
             _renderService = renderService;
         }
 
-        
-        [HttpGet("UserRolesHtml")]
-        public async Task<IActionResult> UserRolesHtml()
+        [HttpGet("UserRolesReport")]
+        public async Task<IActionResult> UserRolesReport()
         {
             try
             {
-                var report = await _renderService.RenderByNameAsync("UserRolesReport", null);
+                var report = await _renderService.RenderByNameAsync("UserRoleReport", null);
                 return Ok(report.Content);
             }
             catch (Exception ex)
@@ -36,13 +36,18 @@ namespace UserRolesApi.Controllers
             }
         }
 
-        [HttpGet("TvPostajeXlsx")]
-        public async Task<IActionResult> TvPostajeXlsx()
+        [HttpGet("UserRolesXlsxDownload")]
+        public async Task<IActionResult> UserRolesXlsxDownload()
         {
             try
             {
-                var report = await _renderService.RenderByNameAsync("excel", null);
-                return File(report.Content, "application/octet-stream", "report.xlsx");
+                var report = await _renderService.RenderAsync(new RenderRequest() { Template = new Template()
+                {
+                    Name = "UserRoleReport",
+                    Recipe = Recipe.HtmlToXlsx
+                }
+                });
+                return File(report.Content, "application/octet-stream", "Korisničke uloge.xlsx");
             }
             catch (Exception ex)
             {
